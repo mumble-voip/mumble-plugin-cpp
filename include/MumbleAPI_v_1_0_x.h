@@ -427,8 +427,8 @@ struct MumbleAPI_v_1_0_x {
 	/// @param key The key to the desired setting
 	/// @param value The value that should be set for the given setting
 	/// @returns The error code. If everything went well, STATUS_OK will be returned.
-	mumble_error_t(PLUGIN_CALLING_CONVENTION *setMumbleSetting_bool)(mumble_plugin_id_t callerID, mumble_settings_key_t,
-																	 bool value);
+	mumble_error_t(PLUGIN_CALLING_CONVENTION *setMumbleSetting_bool)(mumble_plugin_id_t callerID,
+																	 mumble_settings_key_t key, bool value);
 
 	/// Sets the value of the setting with the given key. Note that this function can only be used for settings whose
 	/// value is an int!
@@ -437,8 +437,8 @@ struct MumbleAPI_v_1_0_x {
 	/// @param key The key to the desired setting
 	/// @param value The value that should be set for the given setting
 	/// @returns The error code. If everything went well, STATUS_OK will be returned.
-	mumble_error_t(PLUGIN_CALLING_CONVENTION *setMumbleSetting_int)(mumble_plugin_id_t callerID, mumble_settings_key_t,
-																	int value);
+	mumble_error_t(PLUGIN_CALLING_CONVENTION *setMumbleSetting_int)(mumble_plugin_id_t callerID,
+																	mumble_settings_key_t key, int value);
 
 	/// Sets the value of the setting with the given key. Note that this function can only be used for settings whose
 	/// value is a double!
@@ -448,7 +448,7 @@ struct MumbleAPI_v_1_0_x {
 	/// @param value The value that should be set for the given setting
 	/// @returns The error code. If everything went well, STATUS_OK will be returned.
 	mumble_error_t(PLUGIN_CALLING_CONVENTION *setMumbleSetting_double)(mumble_plugin_id_t callerID,
-																	   mumble_settings_key_t, double value);
+																	   mumble_settings_key_t key, double value);
 
 	/// Sets the value of the setting with the given key. Note that this function can only be used for settings whose
 	/// value is a string!
@@ -458,7 +458,7 @@ struct MumbleAPI_v_1_0_x {
 	/// @param value The value that should be set for the given setting
 	/// @returns The error code. If everything went well, STATUS_OK will be returned.
 	mumble_error_t(PLUGIN_CALLING_CONVENTION *setMumbleSetting_string)(mumble_plugin_id_t callerID,
-																	   mumble_settings_key_t, const char *value);
+																	   mumble_settings_key_t key, const char *value);
 
 
 
@@ -478,8 +478,8 @@ struct MumbleAPI_v_1_0_x {
 	/// with 	the data. This has to be a C-encoded String.
 	/// @returns The error code. If everything went well, STATUS_OK will be returned.
 	mumble_error_t(PLUGIN_CALLING_CONVENTION *sendData)(mumble_plugin_id_t callerID, mumble_connection_t connection,
-														mumble_userid_t *users, size_t userCount, const uint8_t *data,
-														size_t dataLength, const char *dataID);
+														const mumble_userid_t *users, size_t userCount,
+														const uint8_t *data, size_t dataLength, const char *dataID);
 
 	/// Logs the given message (typically to Mumble's console). All passed strings have to be UTF-8 encoded.
 	///

@@ -1,7 +1,7 @@
 // Copyright 2020 The Mumble Developers. All rights reserved.
 // Use of this source code is governed by a BSD-style license
 // that can be found in the LICENSE file at the root of the
-// Mumble source tree or at <https://www.mumble.info/LICENSE>.
+// source tree.
 
 #include "MumblePlugin.h"
 #include "MumblePlugin_v_1_0_x.h"
@@ -57,7 +57,7 @@ PLUGIN_EXPORT uint32_t PLUGIN_CALLING_CONVENTION mumble_deactivateFeatures(uint3
 	return MumblePlugin::getPlugin().deactivateFeatures(features);
 }
 
-#ifdef USE_POSITIONAL_AUDIO
+#ifdef MUMBLE_PLUGIN_WRAPPER_USE_POSITIONAL_AUDIO
 PLUGIN_EXPORT uint8_t PLUGIN_CALLING_CONVENTION mumble_initPositionalData(const char **programNames,
 																		  const uint64_t *programPIDs,
 																		  size_t programCount) {
@@ -75,9 +75,9 @@ PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_fetchPositionalData(float *a
 PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_shutdownPositionalData() {
 	MumblePlugin::getPlugin().shutdownPositionalData();
 }
-#endif // USE_POSITIONAL_AUDIO
+#endif // MUMBLE_PLUGIN_WRAPPER_USE_POSITIONAL_AUDIO
 
-#ifdef USE_SERVER_EVENT_CALLBACKS
+#ifdef MUMBLE_PLUGIN_WRAPPER_USE_SERVER_EVENT_CALLBACKS
 PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_onServerConnected(mumble_connection_t connection) {
 	MumblePlugin::getPlugin().onServerConnected(connection);
 }
@@ -133,9 +133,9 @@ PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_onChannelRenamed(mumble_conn
 																	 mumble_channelid_t channelID) {
 	MumblePlugin::getPlugin().onChannelRenamed(connection, channelID);
 }
-#endif // USE_SERVER_EVENT_CALLBACKS
+#endif // MUMBLE_PLUGIN_WRAPPER_USE_SERVER_EVENT_CALLBACKS
 
-#ifdef USE_AUDIO_CALLBACKS
+#ifdef MUMBLE_PLUGIN_WRAPPER_USE_AUDIO_CALLBACKS
 PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_onAudioInput(short *inputPCM, uint32_t sampleCount,
 																 uint16_t channelCount, uint32_t sampleRate,
 																 bool isSpeech) {
@@ -154,23 +154,23 @@ PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_onAudioOutputAboutToPlay(flo
 																			 uint32_t sampleRate) {
 	return MumblePlugin::getPlugin().onAudioAboutOutputAboutToPlay(outputPCM, sampleCount, channelCount, sampleRate);
 }
-#endif // USE_AUDIO_CALLBACKS
+#endif // MUMBLE_PLUGIN_WRAPPER_USE_AUDIO_CALLBACKS
 
-#ifdef USE_PLUGIN_DATA_FRAMEWORK_CALLBACKS
+#ifdef MUMBLE_PLUGIN_WRAPPER_USE_PLUGIN_DATA_FRAMEWORK_CALLBACKS
 PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_onReceiveData(mumble_connection_t connection,
 																  mumble_userid_t senderID, const uint8_t *data,
 																  size_t dataLength, const char *dataID) {
 	return MumblePlugin::getPlugin().onReceiveData(connection, senderID, data, dataLength, dataID);
 }
-#endif // USE_PLUGIN_DATA_FRAMEWORK_CALLBACKS
+#endif // MUMBLE_PLUGIN_WRAPPER_USE_PLUGIN_DATA_FRAMEWORK_CALLBACKS
 
-#ifdef USE_KEY_EVENT_CALLBACKS
+#ifdef MUMBLE_PLUGIN_WRAPPER_USE_KEY_EVENT_CALLBACKS
 PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_onKeyEvent(uint32_t keyCode, bool wasPress) {
 	MumblePlugin::getPlugin().onKeyEvent(keyCode, wasPress);
 }
-#endif // USE_KEY_EVENT_CALLBACKS
+#endif // MUMBLE_PLUGIN_WRAPPER_USE_KEY_EVENT_CALLBACKS
 
-#ifdef USE_PLUGIN_UPDATES
+#ifdef MUMBLE_PLUGIN_WRAPPER_USE_PLUGIN_UPDATES
 PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_hasUpdate() {
 	return MumblePlugin::getPlugin().hasUpdate();
 }
@@ -178,5 +178,5 @@ PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_hasUpdate() {
 PLUGIN_EXPORT struct MumbleStringWrapper PLUGIN_CALLING_CONVENTION mumble_getUpdateDownloadURL() {
 	return MumblePlugin::getPlugin().getUpdateDownloadURL();
 }
-#endif // USE_PLUGIN_UPDATES
+#endif // MUMBLE_PLUGIN_WRAPPER_USE_PLUGIN_UPDATES
 };

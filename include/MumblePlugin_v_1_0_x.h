@@ -194,9 +194,9 @@ PLUGIN_EXPORT uint32_t PLUGIN_CALLING_CONVENTION mumble_deactivateFeatures(uint3
 /// @param programCount The length of programNames and programPIDs
 /// @returns The error code. If everything went fine PDEC_OK shall be returned. In that case Mumble will start
 /// frequently 	calling fetchPositionalData. If this returns anything but PDEC_OK, Mumble will assume that the plugin is
-/// (currently) 	uncapable of providing positional data. In this case this function must not have allocated any memory
-/// that needs to be 	cleaned up later on. Depending on the returned error code, Mumble might try to call this function
-/// again later on.
+/// (currently) 	uncapable of providing positional data. In this case this function must not have allocated any
+/// memory that needs to be 	cleaned up later on. Depending on the returned error code, Mumble might try to call this
+/// function again later on.
 PLUGIN_EXPORT uint8_t PLUGIN_CALLING_CONVENTION mumble_initPositionalData(const char **programNames,
 																		  const uint64_t *programPIDs,
 																		  size_t programCount);
@@ -216,13 +216,13 @@ PLUGIN_EXPORT uint8_t PLUGIN_CALLING_CONVENTION mumble_initPositionalData(const 
 /// @param[out] cameraAxis A float-array of size 3 representing a vector from the bottom of the camera to its top. One
 /// unit 	represents one meter of distance.
 /// @param[out] context A pointer to where the pointer to a C-encoded string storing the context of the provided
-/// positional data 	shall be written. This context should include information about the server (and team) the player is
-/// on. Only players with identical 	context will be able to hear each other's audio. The returned pointer has to remain
-/// valid until the next invokation of this function 	or until shutdownPositionalData is called.
+/// positional data 	shall be written. This context should include information about the server (and team) the player
+/// is on. Only players with identical 	context will be able to hear each other's audio. The returned pointer has to
+/// remain valid until the next invokation of this function 	or until shutdownPositionalData is called.
 /// @param[out] identity A pointer to where the pointer to a C-encoded string storing the identity of the player shall
 /// be written. It can 	be polled by external scripts from the server and should uniquely identify the player in the
-/// game. The pointer has to remain valid 	until the next invokation of this function or until shutdownPositionalData is
-/// called.
+/// game. The pointer has to remain valid 	until the next invokation of this function or until shutdownPositionalData
+/// is called.
 /// @returns Whether this plugin can continue delivering positional data. If this function returns false,
 /// shutdownPositionalData will 	be called.
 PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_fetchPositionalData(float *avatarPos, float *avatarDir,
@@ -262,8 +262,8 @@ PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_onServerSynchronized(mumble_
 /// @param connection The ID of the server-connection this event is connected to
 /// @param userID The ID of the user this event has been triggered for
 /// @param previousChannelID The ID of the chanel the user is coming from. Negative IDs indicate that there is no
-/// previous channel (e.g. the user 	freshly connected to the server) or the channel isn't available because of any other
-/// reason.
+/// previous channel (e.g. the user 	freshly connected to the server) or the channel isn't available because of any
+/// other reason.
 /// @param newChannelID The ID of the channel the user has entered. If the ID is negative, the new channel could not be
 /// retrieved. This means 	that the ID is invalid.
 PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_onChannelEntered(mumble_connection_t connection,

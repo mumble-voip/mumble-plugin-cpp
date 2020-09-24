@@ -1,7 +1,7 @@
 // Copyright 2020 The Mumble Developers. All rights reserved.
 // Use of this source code is governed by a BSD-style license
 // that can be found in the LICENSE file at the root of the
-// Mumble source tree or at <https://www.mumble.info/LICENSE>.
+// source tree.
 
 #include "MumblePlugin.h"
 
@@ -21,6 +21,8 @@ MumblePlugin::~MumblePlugin() {
 mumble_error_t MumblePlugin::internal_init(mumble_plugin_id_t id) noexcept {
 	m_assignedID = id;
 
+	m_api.setPluginID(id);
+
 	// Forward call
 	return init();
 }
@@ -35,7 +37,10 @@ mumble_version_t MumblePlugin::getAPIVersion() const noexcept {
 }
 
 void MumblePlugin::registerAPIFunctions(void *api) noexcept {
-	m_api = MUMBLE_API_CAST(api);
+	// We construct an "invalid" MumbleAPI object since the API doesn't know of a pluginID yet.
+	// That is okay though since there is no callback inside the plugin class that will be called
+	// before we had a chance to pass the pluginID to the API class.
+	m_api = MumbleAPI(MUMBLE_API_CAST(api));
 }
 
 void MumblePlugin::releaseResource(const void *pointer) noexcept {
@@ -81,7 +86,7 @@ MumbleStringWrapper MumblePlugin::getDescription() const noexcept {
 	return wrapper;
 }
 
-#ifdef USE_POSITIONAL_AUDIO
+#ifdef MUMBLE_PLUGIN_WRAPPER_USE_POSITIONAL_AUDIO
 uint8_t MumblePlugin::internal_initPositionalData(const char **programNames, const uint64_t *programPIDs,
 												  std::size_t programCount) noexcept {
 	std::vector< ProgramInformation > programs;
@@ -122,7 +127,7 @@ uint32_t MumblePlugin::deactivateFeatures(uint32_t features) noexcept {
 	return features;
 }
 
-#ifdef USE_POSITIONAL_AUDIO
+#ifdef MUMBLE_PLUGIN_WRAPPER_USE_POSITIONAL_AUDIO
 uint8_t MumblePlugin::initPositionalData(std::vector< ProgramInformation > &programs) noexcept {
 	// Report permanent error by default in order to turn positional data off
 	return PDEC_ERROR_PERM;
@@ -145,9 +150,9 @@ bool MumblePlugin::fetchPositionalData(float *avatarPos, float *avatarDir, float
 
 void MumblePlugin::shutdownPositionalData() noexcept {
 }
-#endif // USE_POSITIONAL_AUDIO
+#endif // MUMBLE_PLUGIN_WRAPPER_USE_POSITIONAL_AUDIO
 
-#ifdef USE_SERVER_EVENT_CALLBACKS
+#ifdef MUMBLE_PLUGIN_WRAPPER_USE_SERVER_EVENT_CALLBACKS
 void MumblePlugin::onServerConnected(mumble_connection_t connection) noexcept {
 	UNUSED(connection);
 }
@@ -207,9 +212,9 @@ void MumblePlugin::onChannelRenamed(mumble_connection_t connection, mumble_chann
 	UNUSED(channelID);
 }
 
-#endif // USE_SERVER_EVENT_CALLBACKS
+#endif // MUMBLE_PLUGIN_WRAPPER_USE_SERVER_EVENT_CALLBACKS
 
-#ifdef USE_AUDIO_CALLBACKS
+#ifdef MUMBLE_PLUGIN_WRAPPER_USE_AUDIO_CALLBACKS
 bool MumblePlugin::onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRate,
 								bool isSpeech) noexcept {
 	UNUSED(inputPCM);
@@ -243,9 +248,9 @@ bool MumblePlugin::onAudioAboutOutputAboutToPlay(float *outputPCM, uint32_t samp
 	return false;
 }
 
-#endif // USE_AUDIO_CALLBACKS
+#endif // MUMBLE_PLUGIN_WRAPPER_USE_AUDIO_CALLBACKS
 
-#ifdef USE_PLUGIN_DATA_FRAMEWORK_CALLBACKS
+#ifdef MUMBLE_PLUGIN_WRAPPER_USE_PLUGIN_DATA_FRAMEWORK_CALLBACKS
 bool MumblePlugin::onReceiveData(mumble_connection_t connection, mumble_userid_t senderID, const uint8_t *data,
 								 std::size_t dataLength, const char *dataID) noexcept {
 	UNUSED(connection);
@@ -257,17 +262,17 @@ bool MumblePlugin::onReceiveData(mumble_connection_t connection, mumble_userid_t
 	return false;
 }
 
-#endif // USE_PLUGIN_DATA_FRAMEWORK_CALLBACKS
+#endif // MUMBLE_PLUGIN_WRAPPER_USE_PLUGIN_DATA_FRAMEWORK_CALLBACKS
 
-#ifdef USE_KEY_EVENT_CALLBACKS
+#ifdef MUMBLE_PLUGIN_WRAPPER_USE_KEY_EVENT_CALLBACKS
 void MumblePlugin::onKeyEvent(uint32_t keyCode, bool wasPress) noexcept {
 	UNUSED(keyCode);
 	UNUSED(wasPress);
 }
 
-#endif // USE_KEY_EVENT_CALLBACKS
+#endif // MUMBLE_PLUGIN_WRAPPER_USE_KEY_EVENT_CALLBACKS
 
-#ifdef USE_PLUGIN_UPDATES
+#ifdef MUMBLE_PLUGIN_WRAPPER_USE_PLUGIN_UPDATES
 bool MumblePlugin::hasUpdate() noexcept {
 	return false;
 }
@@ -281,4 +286,4 @@ MumbleStringWrapper MumblePlugin::getUpdateDownloadURL() const noexcept {
 	return wrapper;
 }
 
-#endif // USE_PLUGIN_UPDATES
+#endif // MUMBLE_PLUGIN_WRAPPER_USE_PLUGIN_UPDATES

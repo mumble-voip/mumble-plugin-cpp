@@ -32,5 +32,6 @@ jobs:
       install: .ci/travis/install_macos.sh
       script: .ci/travis/build_unix.sh
     - name: "Windows (Clang)"
+      os: windows
       compiler: clang
       script: .ci/travis/build_windows.bat

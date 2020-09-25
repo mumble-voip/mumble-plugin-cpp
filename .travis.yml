@@ -1,20 +1,21 @@
 language: cpp
 
-matrix:
-    include:
-        - os: linux
-          dist:
-              - bionic
-              - focal
-          compiler:
-              - gcc
-              - clang
-          install:
-              - sudo apt update
-              - sudo apt install cmake
-          script:
-              - mkdir build
-              - cd build
-              - cmake ..
-              - make -j $(nproc)
+os: linux
+
+compiler:
+    - gcc
+    - clang
+
+dist:
+  - bionic
+  - focal
+
+install:
+  - sudo apt update
+  - sudo apt install cmake
+script:
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make -j $(nproc)
 

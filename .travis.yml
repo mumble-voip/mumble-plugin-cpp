@@ -29,7 +29,6 @@ jobs:
     - name: "MacOS (Clang)"
       os: osx
       compiler: clang
-      install: .ci/travis/install_macos.sh
       script: .ci/travis/build_unix.sh
     - name: "Windows (Clang)"
       os: windows

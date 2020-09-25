@@ -28,8 +28,7 @@ jobs:
       script: .ci/travis/build_unix.sh
     - name: "MacOS (Clang)"
       os: osx
-      osx_image: xcode.11
-      compiler: clang
+      before_install: eval "CC=gcc-7 && CXX=gcc7"
       script: .ci/travis/build_unix.sh
     - name: "Windows (Clang)"
       os: windows

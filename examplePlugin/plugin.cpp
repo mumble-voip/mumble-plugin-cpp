@@ -18,7 +18,7 @@ public:
 			std::cout << "Server " << m_api.getServerHash(connection * 5 + 1) << " finished synchronizing" << std::endl;
 			for (auto currentUser : m_api.getAllUsers(connection)) {
 				std::cout << "Found user " << m_api.getUserName(connection, currentUser) << " ("
-						  << m_api.getUserHash(connection, currentUser) << std::endl;
+						  << m_api.getUserHash(connection, currentUser) << ")" << std::endl;
 			}
 		} catch (const MumbleAPIException &e) {
 			std::cerr << "onServerSynchronized: " << e.what() << " (ErrorCode " << e.errorCode() << ")" << std::endl;

@@ -1,21 +1,28 @@
 language: cpp
 
-os: linux
-
-compiler:
-    - gcc
-    - clang
-
-dist:
-  - bionic
-  - focal
-
-install:
-  - sudo apt update
-  - sudo apt install cmake
-script:
-  - mkdir build
-  - cd build
-  - cmake ..
-  - make -j $(nproc)
-
+jobs:
+    include:
+    - name: "Linux Bionic (GCC)"
+      os: linux
+      dist: bionic
+      compiler: gcc
+      install: .ci/travis/install_linux.sh
+      script: .ci/travis/build_unix.sh
+    - name: "Linux Bionic (Clang)"
+      os: linux
+      dist: bionic
+      compiler: clang
+      install: .ci/travis/install_linux.sh
+      script: .ci/travis/build_unix.sh
+    - name: "Linux Focal (GCC)"
+      os: linux
+      dist: focal
+      compiler: gcc
+      install: .ci/travis/install_linux.sh
+      script: .ci/travis/build_unix.sh
+    - name: "Linux Focal (Clang)"
+      os: linux
+      dist: focal
+      compiler: clang
+      install: .ci/travis/install_linux.sh
+      script: .ci/travis/build_unix.sh

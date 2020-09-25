@@ -49,7 +49,6 @@ if (positional-audio OR all-features)
 endif()
 
 if (server-event-callbacks OR all-callbacks OR all-features)
-	message(STATUS "test")
 	target_compile_definitions(mumble_plugin_cpp_wrapper
 		PUBLIC
 			"MUMBLE_PLUGIN_WRAPPER_USE_SERVER_EVENT_CALLBACKS"

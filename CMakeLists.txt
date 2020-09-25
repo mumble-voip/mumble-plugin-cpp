@@ -14,6 +14,7 @@ project(MumblePluginCppWrapper
 )
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(positional-audio "Include functions for positional audio" OFF)
 option(server-event-callbacks "Include callback functions for server-events" OFF)

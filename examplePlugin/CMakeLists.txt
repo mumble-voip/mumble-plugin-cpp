@@ -15,6 +15,7 @@ project(ExamplePlugin
 
 # Cpp17 or later is required in order to use the wrapper
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # In order to use additional parts of the plugin interface, you have to enable the respective optiopn
 # e.g. set(positional-audio ON)

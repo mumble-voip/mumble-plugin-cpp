@@ -28,7 +28,7 @@ jobs:
       script: .ci/travis/build_unix.sh
     - name: "MacOS (Clang)"
       os: osx
-      osx_dist: xcode12
+      osx_image: xcode.11
       compiler: clang
       script: .ci/travis/build_unix.sh
     - name: "Windows (Clang)"

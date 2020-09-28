@@ -37,6 +37,16 @@ MumblePlugin &MumblePlugin::getPlugin() noexcept {
 }
 ```
 
+You also have to implement `MumblePlugin::releaseResource` which is a pure virtual function of the `MumblePlugin` class. If you are not allocating any
+resources that need freeing and that are passed to Mumble through the API boundary, you can use a no-op implementation like this:
+```
+void <YourPluginClass>::releaseResource(const void *ptr) noexcept {
+    // We will terminate here as any call to this function means that there is indeed some resource that needs
+    // freeing contradicting our no-op assumption for this function
+    std::terminate();
+} 
+```
+
 By default only a small subset of functionality is available for you to implement. If you want to implement any of the missing functions,
 you can set the following cmake-variables:
 - `positional-audio`

@@ -41,7 +41,7 @@ public:
 	virtual MumbleStringWrapper getName() const noexcept final;
 	virtual mumble_version_t getAPIVersion() const noexcept final;
 	virtual void registerAPIFunctions(void *api) noexcept final;
-	virtual void releaseResource(const void *pointer) noexcept;
+	virtual void releaseResource(const void *pointer) noexcept = 0;
 	virtual void internal_shutdown() noexcept final;
 	virtual void shutdown() noexcept;
 	virtual MumbleStringWrapper getAuthor() const noexcept final;

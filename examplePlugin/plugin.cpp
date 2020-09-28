@@ -24,6 +24,12 @@ public:
 			std::cerr << "onServerSynchronized: " << e.what() << " (ErrorCode " << e.errorCode() << ")" << std::endl;
 		}
 	}
+
+	virtual void releaseResource(const void *ptr) noexcept override {
+		// We don't allocate any resources so we can have a no-op implementation
+		// We'll terminate though in case it is called as that is definitely a bug
+		std::terminate();
+	}
 };
 
 MumblePlugin &MumblePlugin::getPlugin() noexcept {

@@ -43,16 +43,6 @@ void MumblePlugin::registerAPIFunctions(void *api) noexcept {
 	m_api = MumbleAPI(MUMBLE_API_CAST(api));
 }
 
-void MumblePlugin::releaseResource(const void *pointer) noexcept {
-	UNUSED(pointer);
-
-	std::cerr << "[ERROR]: Call to default implementation of releaseResource (this means there is a memory leak in the "
-				 "plugin!)"
-			  << std::endl;
-
-	std::terminate();
-}
-
 MumbleStringWrapper MumblePlugin::getName() const noexcept {
 	// The plugin class will exist until the end of the program and therefore it is safe to basically treat its
 	// members as having "static storage"

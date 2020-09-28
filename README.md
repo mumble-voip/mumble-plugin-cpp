@@ -48,28 +48,9 @@ you can set the following cmake-variables:
 
 Additionally you can also use these meta-variables: `all-callbacks`, `all-features`
 
-Due to technical reasons it is (at the moment) impossible to simply use `target_link_libraries` to link to the
-wrapper. Instead one has to use a cmake-generator expression to include the respective files:
+Finally you have to link to the `mumble_plugin_cpp_wrapper` target from cmake like this:
 ```
-add_library(example SHARED
-	# Add the object files from the wrapper-lib
-	$<TARGET_OBJECTS:mumble_plugin_cpp_wrapper>
-	...
-)
-```
-
-followed by adapting the needed compile-definitions and include-directories:
-```
-get_target_property(NEEDED_COMPILE_DEFINITONS mumble_plugin_cpp_wrapper INTERFACE_COMPILE_DEFINITIONS)
-target_compile_definitions(example
-	PUBLIC
-		${NEEDED_COMPILE_DEFINITONS}
-)
-get_target_property(NEEDED_INCLUDE_DIRS mumble_plugin_cpp_wrapper INTERFACE_INCLUDE_DIRECTORIES)
-target_include_directories(example
-	PUBLIC
-		${NEEDED_INCLUDE_DIRS}
-)
+target_link_libraries(<yourTargetHere> PRIVATE mumble_plugin_cpp_wrapper)
 ```
 
 You can have a look at the [example plugin](examplePlugin/) in order to check out a basic example that should get

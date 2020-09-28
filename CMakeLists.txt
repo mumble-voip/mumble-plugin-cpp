@@ -5,10 +5,6 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-if (POLICY CMP0076)
-	cmake_policy(SET CMP0076 NEW)
-endif()
-
 set(version "1.0.0")
 
 project(MumblePluginCppWrapper
@@ -34,17 +30,33 @@ option(all-features "Shortcut for enabling all plugin features" OFF)
 # it easily
 add_library(mumble_plugin_cpp_wrapper INTERFACE)
 
-target_sources(mumble_plugin_cpp_wrapper
-	INTERFACE
-		src/MumblePluginDefaultImpl.cpp
-		src/MumbleAPI.cpp
-		src/plugin.cpp
+set(WRAPPER_SOURCES
+	src/MumblePluginDefaultImpl.cpp
+	src/MumbleAPI.cpp
+	src/plugin.cpp
 )
 
-target_include_directories(mumble_plugin_cpp_wrapper
-	INTERFACE
-		"include"
+# Set all source files as absolute paths
+foreach(CURRENT_SOURCE IN LISTS WRAPPER_SOURCES)
+	get_filename_component(ABS_SOURCE_PATH "${CURRENT_SOURCE}" REALPATH BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+	target_sources(mumble_plugin_cpp_wrapper
+		INTERFACE
+			"${ABS_SOURCE_PATH}"
+	)
+endforeach()
+
+set(WRAPPER_INCLUDES
+	"./include"
 )
+
+# Set all include-dirs as absolute paths
+foreach(CURRENT_INCLUDE IN LISTS WRAPPER_INCLUDES)
+	get_filename_component(ABS_INCLUDE_PATH "${CURRENT_INCLUDE}" ABSOLUTE "${CMAKE_CURRENT_SOURCE_DIR}")
+	target_include_directories(mumble_plugin_cpp_wrapper
+		INTERFACE
+		"${ABS_INCLUDE_PATH}"
+	)
+endforeach()
 
 if (positional-audio OR all-features)
 	target_compile_definitions(mumble_plugin_cpp_wrapper

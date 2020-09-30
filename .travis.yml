@@ -31,7 +31,6 @@ jobs:
       compiler: clang
       osx_image: xcode12
       script: .ci/travis/build_unix.sh
-    - name: "Windows (Clang)"
+    - name: "Windows (MSVC)"
       os: windows
-      compiler: clang
       script: .ci/travis/build_windows.bat

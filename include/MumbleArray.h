@@ -21,6 +21,8 @@ public:
 
 	ContentType *begin() noexcept { return m_content.get(); }
 	ContentType *end() noexcept { return m_content.get() + m_size; }
+	const ContentType *begin() const noexcept { return cbegin(); }
+	const ContentType *end() const noexcept { return cend(); }
 	const ContentType *cbegin() const noexcept { return m_content.get(); }
 	const ContentType *cend() const noexcept { return m_content.get() + m_size; }
 

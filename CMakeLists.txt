@@ -26,15 +26,19 @@ option(plugin-update "Include functions for self-updating the plugin" OFF)
 option(all-callbacks "Include event callback functions" OFF)
 option(all-features "Shortcut for enabling all plugin features" OFF)
 
-# Build as an object library in order for the actual plugin lib to be able to include 
-# it easily
 add_library(mumble_plugin_cpp_wrapper INTERFACE)
+add_library(mumble_plugin_cpp_wrapper_api INTERFACE)
 
 set(WRAPPER_SOURCES
 	src/MumblePluginDefaultImpl.cpp
-	src/MumbleAPI.cpp
 	src/plugin.cpp
 )
+
+set(API_SOURCES
+	src/MumbleAPI.cpp
+)
+
+target_link_libraries(mumble_plugin_cpp_wrapper INTERFACE mumble_plugin_cpp_wrapper_api)
 
 # Set all source files as absolute paths
 foreach(CURRENT_SOURCE IN LISTS WRAPPER_SOURCES)
@@ -45,7 +49,19 @@ foreach(CURRENT_SOURCE IN LISTS WRAPPER_SOURCES)
 	)
 endforeach()
 
+foreach(CURRENT_SOURCE IN LISTS API_SOURCES)
+	get_filename_component(ABS_SOURCE_PATH "${CURRENT_SOURCE}" REALPATH BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+	target_sources(mumble_plugin_cpp_wrapper_api
+		INTERFACE
+			"${ABS_SOURCE_PATH}"
+	)
+endforeach()
+
 set(WRAPPER_INCLUDES
+	"./include"
+)
+
+set(API_INCLUDES
 	"./include"
 )
 
@@ -53,6 +69,14 @@ set(WRAPPER_INCLUDES
 foreach(CURRENT_INCLUDE IN LISTS WRAPPER_INCLUDES)
 	get_filename_component(ABS_INCLUDE_PATH "${CURRENT_INCLUDE}" ABSOLUTE "${CMAKE_CURRENT_SOURCE_DIR}")
 	target_include_directories(mumble_plugin_cpp_wrapper
+		INTERFACE
+		"${ABS_INCLUDE_PATH}"
+	)
+endforeach()
+
+foreach(CURRENT_INCLUDE IN LISTS API_INCLUDES)
+	get_filename_component(ABS_INCLUDE_PATH "${CURRENT_INCLUDE}" ABSOLUTE "${CMAKE_CURRENT_SOURCE_DIR}")
+	target_include_directories(mumble_plugin_cpp_wrapper_api
 		INTERFACE
 		"${ABS_INCLUDE_PATH}"
 	)

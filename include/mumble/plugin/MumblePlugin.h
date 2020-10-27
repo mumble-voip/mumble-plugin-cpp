@@ -11,9 +11,9 @@
 #include <string>
 #include <vector>
 
-#include "MumbleAPI.h"
+#include "mumble/plugin/MumbleAPI.h"
 
-#include "PluginComponents_v_1_0_x.h"
+#include "mumble/plugin/internal/PluginComponents_v_1_0_x.h"
 
 using mumble_plugin_id_t = uint32_t;
 

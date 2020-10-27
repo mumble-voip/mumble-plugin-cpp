@@ -3,8 +3,8 @@
 // that can be found in the LICENSE file at the root of the
 // source tree.
 
-#include "MumbleAPI.h"
-#include "MumbleResourceWrapper.h"
+#include "mumble/plugin/MumbleAPI.h"
+#include "mumble/plugin/MumbleResourceWrapper.h"
 
 #include <cstring>
 
@@ -258,22 +258,42 @@ mumble_error_t MumbleAPI::requestSetLocalUserComment(mumble_connection_t connect
 	return m_apiStruct.requestSetLocalUserComment(m_pluginID, connection, comment);
 }
 
-std::optional< mumble_userid_t > MumbleAPI::findUserByName(mumble_connection_t connection,
-														   const char *userName) const noexcept {
+mumble_userid_t MumbleAPI::findUserByName(mumble_connection_t connection, const char *userName) const {
 	mumble_userid_t userID;
 
 	mumble_error_t errorCode = m_apiStruct.findUserByName(m_pluginID, connection, userName, &userID);
 
-	return errorCode == STATUS_OK ? std::optional< mumble_userid_t >(userID) : std::nullopt;
+	HANDLE_ERROR(errorCode, findUserByName)
+
+	return userID;
 }
 
-std::optional< mumble_channelid_t > MumbleAPI::findChannelByName(mumble_connection_t connection,
-																 const char *channelName) const noexcept {
+std::optional< mumble_userid_t > MumbleAPI::findUserByName_noexcept(mumble_connection_t connection,
+																	const char *userName) const noexcept {
+	try {
+		return findUserByName(connection, userName);
+	} catch (const MumbleAPIException &) {
+		return std::nullopt;
+	}
+}
+
+mumble_channelid_t MumbleAPI::findChannelByName(mumble_connection_t connection, const char *channelName) const {
 	mumble_channelid_t channelID;
 
 	mumble_error_t errorCode = m_apiStruct.findChannelByName(m_pluginID, connection, channelName, &channelID);
 
-	return errorCode == STATUS_OK ? std::optional< mumble_channelid_t >(channelID) : std::nullopt;
+	HANDLE_ERROR(errorCode, findChannelByName)
+
+	return channelID;
+}
+
+std::optional< mumble_channelid_t > MumbleAPI::findChannelByName_noexcept(mumble_connection_t connection,
+																		  const char *channelName) const noexcept {
+	try {
+		return findChannelByName(connection, channelName);
+	} catch (const MumbleAPIException &) {
+		return std::nullopt;
+	}
 }
 
 bool MumbleAPI::getMumbleSetting_bool(mumble_settings_key_t key) const {

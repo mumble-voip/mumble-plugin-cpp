@@ -6,9 +6,9 @@
 #ifndef MUMBLEPLUGIN_MUMBLEAPI_H_
 #define MUMBLEPLUGIN_MUMBLEAPI_H_
 
-#include "MumbleAPI_v_1_0_x.h"
-#include "MumbleArray.h"
-#include "MumbleString.h"
+#include "mumble/plugin/MumbleArray.h"
+#include "mumble/plugin/MumbleString.h"
+#include "mumble/plugin/internal/MumbleAPI_v_1_0_x.h"
 
 #include <exception>
 #include <memory>
@@ -70,10 +70,12 @@ public:
 	mumble_error_t requestLocalUserMute(mumble_connection_t connection, bool muted) const noexcept;
 	mumble_error_t requestLocalUserDeaf(mumble_connection_t connection, bool deafened) const noexcept;
 	mumble_error_t requestSetLocalUserComment(mumble_connection_t connection, const char *comment) const noexcept;
-	std::optional< mumble_userid_t > findUserByName(mumble_connection_t connection,
-													const char *userName) const noexcept;
-	std::optional< mumble_channelid_t > findChannelByName(mumble_connection_t connection,
-														  const char *channelName) const noexcept;
+	mumble_userid_t findUserByName(mumble_connection_t connection, const char *userName) const;
+	std::optional< mumble_userid_t > findUserByName_noexcept(mumble_connection_t connection,
+															 const char *userName) const noexcept;
+	mumble_channelid_t findChannelByName(mumble_connection_t connection, const char *channelName) const;
+	std::optional< mumble_channelid_t > findChannelByName_noexcept(mumble_connection_t connection,
+																   const char *channelName) const noexcept;
 	bool getMumbleSetting_bool(mumble_settings_key_t key) const;
 	int getMumbleSetting_int(mumble_settings_key_t key) const;
 	double getMumbleSetting_double(mumble_settings_key_t key) const;

@@ -3,9 +3,9 @@
 // that can be found in the LICENSE file at the root of the
 // source tree.
 
-#include "MumblePlugin.h"
+#include "mumble/plugin/MumblePlugin.h"
 
-#include "MumblePlugin_v_1_0_x.h"
+#include "mumble/plugin/internal/MumblePlugin_v_1_0_x.h"
 
 #include <iostream>
 

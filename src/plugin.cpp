@@ -3,8 +3,8 @@
 // that can be found in the LICENSE file at the root of the
 // source tree.
 
-#include "MumblePlugin.h"
-#include "MumblePlugin_v_1_0_x.h"
+#include "mumble/plugin/MumblePlugin.h"
+#include "mumble/plugin/internal/MumblePlugin_v_1_0_x.h"
 
 extern "C" {
 PLUGIN_EXPORT mumble_error_t PLUGIN_CALLING_CONVENTION mumble_init(uint32_t id) {

@@ -159,20 +159,20 @@ bool MumbleAPI::isUserLocallyMuted(mumble_connection_t connection, mumble_userid
 	return muted;
 }
 
-bool MumbleAPI::isLocalUserMuted(mumble_connection_t connection) const {
+bool MumbleAPI::isLocalUserMuted() const {
 	bool muted;
 
-	mumble_error_t errorCode = m_apiStruct.isLocalUserMuted(m_pluginID, connection, &muted);
+	mumble_error_t errorCode = m_apiStruct.isLocalUserMuted(m_pluginID, &muted);
 
 	HANDLE_ERROR(errorCode, isLocalUserMuted);
 
 	return muted;
 }
 
-bool MumbleAPI::isLocalUserDeafed(mumble_connection_t connection) const {
+bool MumbleAPI::isLocalUserDeafed() const {
 	bool deafened;
 
-	mumble_error_t errorCode = m_apiStruct.isLocalUserDeafed(m_pluginID, connection, &deafened);
+	mumble_error_t errorCode = m_apiStruct.isLocalUserDeafed(m_pluginID, &deafened);
 
 	HANDLE_ERROR(errorCode, isLocalUserDeafed);
 
@@ -245,12 +245,12 @@ mumble_error_t MumbleAPI::requestLocalMute(mumble_connection_t connection, mumbl
 	return m_apiStruct.requestLocalMute(m_pluginID, connection, userID, muted);
 }
 
-mumble_error_t MumbleAPI::requestLocalUserMute(mumble_connection_t connection, bool muted) const noexcept {
-	return m_apiStruct.requestLocalUserMute(m_pluginID, connection, muted);
+mumble_error_t MumbleAPI::requestLocalUserMute(bool muted) const noexcept {
+	return m_apiStruct.requestLocalUserMute(m_pluginID, muted);
 }
 
-mumble_error_t MumbleAPI::requestLocalUserDeaf(mumble_connection_t connection, bool deafened) const noexcept {
-	return m_apiStruct.requestLocalUserDeaf(m_pluginID, connection, deafened);
+mumble_error_t MumbleAPI::requestLocalUserDeaf(bool deafened) const noexcept {
+	return m_apiStruct.requestLocalUserDeaf(m_pluginID, deafened);
 }
 
 mumble_error_t MumbleAPI::requestSetLocalUserComment(mumble_connection_t connection,

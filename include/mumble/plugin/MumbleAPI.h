@@ -56,8 +56,8 @@ public:
 													 mumble_channelid_t channelID) const;
 	mumble_transmission_mode_t getLocalUserTransmissionMode() const;
 	bool isUserLocallyMuted(mumble_connection_t connection, mumble_userid_t userID) const;
-	bool isLocalUserMuted(mumble_connection_t connection) const;
-	bool isLocalUserDeafed(mumble_connection_t connection) const;
+	bool isLocalUserMuted() const;
+	bool isLocalUserDeafed() const;
 	MumbleString getUserHash(mumble_connection_t connection, mumble_userid_t userID) const;
 	MumbleString getServerHash(mumble_connection_t connection) const;
 	MumbleString getUserComment(mumble_connection_t connection, mumble_userid_t userID) const;
@@ -67,8 +67,8 @@ public:
 								   const char *password = nullptr) const noexcept;
 	mumble_error_t requestMicrophoneActivationOvewrite(bool activate) const noexcept;
 	mumble_error_t requestLocalMute(mumble_connection_t connection, mumble_userid_t userID, bool muted) const noexcept;
-	mumble_error_t requestLocalUserMute(mumble_connection_t connection, bool muted) const noexcept;
-	mumble_error_t requestLocalUserDeaf(mumble_connection_t connection, bool deafened) const noexcept;
+	mumble_error_t requestLocalUserMute(bool muted) const noexcept;
+	mumble_error_t requestLocalUserDeaf(bool deafened) const noexcept;
 	mumble_error_t requestSetLocalUserComment(mumble_connection_t connection, const char *comment) const noexcept;
 	mumble_userid_t findUserByName(mumble_connection_t connection, const char *userName) const;
 	std::optional< mumble_userid_t > findUserByName_noexcept(mumble_connection_t connection,

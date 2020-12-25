@@ -169,12 +169,12 @@ bool MumbleAPI::isLocalUserMuted() const {
 	return muted;
 }
 
-bool MumbleAPI::isLocalUserDeafed() const {
+bool MumbleAPI::isLocalUserDeafened() const {
 	bool deafened;
 
-	mumble_error_t errorCode = m_apiStruct.isLocalUserDeafed(m_pluginID, &deafened);
+	mumble_error_t errorCode = m_apiStruct.isLocalUserDeafened(m_pluginID, &deafened);
 
-	HANDLE_ERROR(errorCode, isLocalUserDeafed);
+	HANDLE_ERROR(errorCode, isLocalUserDeafened);
 
 	return deafened;
 }

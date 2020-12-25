@@ -179,7 +179,7 @@ struct MumbleAPI_v_1_0_x {
 	/// @param[out] deafened A pointer to where the deaf state of the local user shall be written
 	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer
 	/// 	may be accessed
-	mumble_error_t (PLUGIN_CALLING_CONVENTION *isLocalUserDeafed)(mumble_plugin_id_t callerID, bool *deafened);
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *isLocalUserDeafened)(mumble_plugin_id_t callerID, bool *deafened);
 
 	/// Gets the hash of the given user (can be used to recognize users between restarts)
 	///

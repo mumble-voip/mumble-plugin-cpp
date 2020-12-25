@@ -57,7 +57,7 @@ public:
 	mumble_transmission_mode_t getLocalUserTransmissionMode() const;
 	bool isUserLocallyMuted(mumble_connection_t connection, mumble_userid_t userID) const;
 	bool isLocalUserMuted() const;
-	bool isLocalUserDeafed() const;
+	bool isLocalUserDeafened() const;
 	MumbleString getUserHash(mumble_connection_t connection, mumble_userid_t userID) const;
 	MumbleString getServerHash(mumble_connection_t connection) const;
 	MumbleString getUserComment(mumble_connection_t connection, mumble_userid_t userID) const;

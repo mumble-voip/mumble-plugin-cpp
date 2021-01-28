@@ -29,7 +29,7 @@ any of the virtual functions in order to hook into the respective callbacks. The
 Furthermore you have to implement `MumblePlugin::getPlugin` to return a reference to a static instance of your plugin class (which thereby effectively
 becomes a singleton):
 
-```
+```cpp
 MumblePlugin &MumblePlugin::getPlugin() noexcept {
     static MyPluginClass plugin;
 
@@ -39,7 +39,7 @@ MumblePlugin &MumblePlugin::getPlugin() noexcept {
 
 You also have to implement `MumblePlugin::releaseResource` which is a pure virtual function of the `MumblePlugin` class. If you are not allocating any
 resources that need freeing and that are passed to Mumble through the API boundary, you can use a no-op implementation like this:
-```
+```cpp
 void <YourPluginClass>::releaseResource(const void *ptr) noexcept {
     // We will terminate here as any call to this function means that there is indeed some resource that needs
     // freeing contradicting our no-op assumption for this function
@@ -59,7 +59,7 @@ you can set the following cmake-variables:
 Additionally you can also use these meta-variables: `all-callbacks`, `all-features`
 
 Finally you have to link to the `mumble_plugin_cpp_wrapper` target from cmake like this:
-```
+```cmake
 target_link_libraries(<yourTargetHere> PRIVATE mumble_plugin_cpp_wrapper)
 ```
 

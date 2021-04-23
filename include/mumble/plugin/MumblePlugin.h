@@ -53,7 +53,7 @@ public:
 	virtual uint32_t deactivateFeatures(uint32_t features) noexcept;
 
 #ifdef MUMBLE_PLUGIN_WRAPPER_USE_POSITIONAL_AUDIO
-	uint8_t internal_initPositionalData(const char **programNames, const uint64_t *programPIDs,
+	uint8_t internal_initPositionalData(const char *const *programNames, const uint64_t *programPIDs,
 										std::size_t programCount) noexcept;
 	virtual uint8_t initPositionalData(std::vector< ProgramInformation > &programs) noexcept;
 	virtual bool fetchPositionalData(float *avatarPos, float *avatarDir, float *avatarAxis, float *cameraPos,

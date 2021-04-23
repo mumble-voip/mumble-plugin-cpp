@@ -306,8 +306,8 @@ bool MumbleAPI::getMumbleSetting_bool(mumble_settings_key_t key) const {
 	return value;
 }
 
-int MumbleAPI::getMumbleSetting_int(mumble_settings_key_t key) const {
-	int value;
+int64_t MumbleAPI::getMumbleSetting_int(mumble_settings_key_t key) const {
+	int64_t value;
 
 	mumble_error_t errorCode = m_apiStruct.getMumbleSetting_int(m_pluginID, key, &value);
 

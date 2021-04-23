@@ -1,4 +1,4 @@
-// Copyright 2019-2020 The Mumble Developers. All rights reserved.
+// Copyright 2021 The Mumble Developers. All rights reserved.
 // Use of this source code is governed by a BSD-style license
 // that can be found in the LICENSE file at the root of the
 // Mumble source tree or at <https://www.mumble.info/LICENSE>.
@@ -48,7 +48,7 @@ enum Mumble_PluginFeature {
 };
 
 /// This enum's values represent talking states a user can be in when using Mumble.
-enum Mumble_TalkingState { INVALID = -1, PASSIVE = 0, TALKING, WHISPERING, SHOUTING };
+enum Mumble_TalkingState { INVALID = -1, PASSIVE = 0, TALKING, WHISPERING, SHOUTING, TALKING_MUTED };
 
 /// This enum's values represent transmission modes a user might have configured. Transmission mode
 /// in this context is referring to a method that determines when a user is speaking and thus when
@@ -76,7 +76,9 @@ enum Mumble_ErrorCode {
 	EC_UNSYNCHRONIZED_BLOB,
 	EC_UNKNOWN_SETTINGS_KEY,
 	EC_WRONG_SETTINGS_TYPE,
-	EC_SETTING_WAS_REMOVED
+	EC_SETTING_WAS_REMOVED,
+	EC_DATA_TOO_BIG,
+	EC_DATA_ID_TOO_LONG,
 };
 
 /// This enum's values represent error codes specific to the framework of handling positional data
@@ -97,6 +99,10 @@ enum Mumble_SettingsKey {
 	MSK_AUDIO_INPUT_VOICE_HOLD            = 0,
 	MSK_AUDIO_INPUT_VAD_SILENCE_THRESHOLD = 1,
 	MSK_AUDIO_INPUT_VAD_SPEECH_THRESHOLD  = 2,
+	MSK_AUDIO_OUTPUT_PA_MINIMUM_DISTANCE  = 3,
+	MSK_AUDIO_OUTPUT_PA_MAXIMUM_DISTANCE  = 4,
+	MSK_AUDIO_OUTPUT_PA_BLOOM             = 5,
+	MSK_AUDIO_OUTPUT_PA_MINIMUM_VOLUME    = 6,
 };
 
 /// This enum's values represent the key-codes Mumble's API uses to reference keys on the keyboard.
@@ -207,7 +213,7 @@ enum Mumble_KeyCode {
 
 
 	// F-keys
-	// Start at a value of 256 as extended ASCII codes range up to 256
+	// Start at a value of 256 as extended ASCII codes range up to 255
 	KC_F1  = 256,
 	KC_F2  = 257,
 	KC_F3  = 258,
@@ -236,28 +242,60 @@ struct Version {
 	int32_t patch;
 #ifdef __cplusplus
 	bool operator<(const Version &other) const {
-		return this->major <= other.major && this->minor <= other.minor && this->patch < other.patch;
+		if (this->major != other.major) {
+			return this->major < other.major;
+		}
+		if (this->minor != other.minor) {
+			return this->minor < other.minor;
+		}
+		// Major and Minor are equal
+		return this->patch < other.patch;
 	}
 
 	bool operator>(const Version &other) const {
-		return this->major >= other.major && this->minor >= other.minor && this->patch > other.patch;
+		if (this->major != other.major) {
+			return this->major > other.major;
+		}
+		if (this->minor != other.minor) {
+			return this->minor > other.minor;
+		}
+		// Major and Minor are equal
+		return this->patch > other.patch;
 	}
 
 	bool operator>=(const Version &other) const {
-		return this->major >= other.major && this->minor >= other.minor && this->patch >= other.patch;
+		if (this->major != other.major) {
+			return this->major > other.major;
+		}
+		if (this->minor != other.minor) {
+			return this->minor > other.minor;
+		}
+		// Major and Minor are equal
+		return this->patch >= other.patch;
 	}
 
 	bool operator<=(const Version &other) const {
-		return this->major <= other.major && this->minor <= other.minor && this->patch <= other.patch;
+		if (this->major != other.major) {
+			return this->major < other.major;
+		}
+		if (this->minor != other.minor) {
+			return this->minor < other.minor;
+		}
+		// Major and Minor are equal
+		return this->patch <= other.patch;
 	}
 
 	bool operator==(const Version &other) const {
 		return this->major == other.major && this->minor == other.minor && this->patch == other.patch;
 	}
 
+	bool operator!=(const Version &other) const {
+		return this->major != other.major || this->minor != other.minor || this->patch != other.patch;
+	}
+
 	operator std::string() const {
-		return std::string("v") + std::to_string(this->major) + std::to_string(this->minor)
-			   + std::to_string(this->patch);
+		return std::string("v") + std::to_string(this->major) + std::string(".") + std::to_string(this->minor)
+			   + std::string(".") + std::to_string(this->patch);
 	}
 
 #	ifdef QT_VERSION
@@ -268,10 +306,15 @@ struct Version {
 #endif
 };
 
-/// @param errorCode The error code to get a message for
+/// Obtains a String representation for the given numeric error code.
+/// Note that the exact String representation corresponding to an error code may change and is thus
+/// not part of the plugin API as such. This function acts merely as a convenience helper for printing
+/// errors in a meaningful way.
+///
+/// @param errorCode The error code to get the String representation for
 /// @returns The error message coresponding to the given error code. The message
-/// 	is encoded as a C-string and are static meaning that it is safe to use the
-/// 	returned pointer in your code.
+/// is encoded as a C-string and is static, meaning that it is safe to use the
+/// returned pointer in your code.
 inline const char *errorMessage(int16_t errorCode) {
 	switch (errorCode) {
 		case EC_GENERIC_ERROR:
@@ -299,7 +342,7 @@ inline const char *errorMessage(int16_t errorCode) {
 		case EC_INVALID_MUTE_TARGET:
 			return "Used an invalid mute-target";
 		case EC_CONNECTION_UNSYNCHRONIZED:
-			return "The requested server connection has not yet finished synchrnonizing";
+			return "The requested server connection has not yet finished synchronizing";
 		case EC_INVALID_API_VERSION:
 			return "The used API version is invalid or not supported";
 		case EC_UNSYNCHRONIZED_BLOB:
@@ -310,12 +353,19 @@ inline const char *errorMessage(int16_t errorCode) {
 			return "The referenced setting has a different type than requested";
 		case EC_SETTING_WAS_REMOVED:
 			return "The referenced setting got removed from Mumble and is no longer used";
+		case EC_DATA_TOO_BIG:
+			return "The given data is too large (exceeds limit)";
+		case EC_DATA_ID_TOO_LONG:
+			return "The given data ID is too long (exceeds limit)";
 		default:
 			return "Unknown error code";
 	}
 }
 
 
+/// This struct is used to return Strings from a plugin to Mumble. It is needed in order to
+/// work around the limitation of std::string not being part of C (it holds important information
+/// about the String's lifetime management requirements).
 struct MumbleStringWrapper {
 	/// The pointer to the actual String data
 	const char *data;
@@ -323,7 +373,7 @@ struct MumbleStringWrapper {
 	size_t size;
 	/// Whether the wrapped String needs to be released
 	/// after its usage. Instances for which this would be
-	/// false: Static Strings
+	/// false: Static Strings, String literals
 	bool needsReleasing;
 };
 

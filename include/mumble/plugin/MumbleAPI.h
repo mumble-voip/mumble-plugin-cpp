@@ -10,6 +10,7 @@
 #include "mumble/plugin/MumbleString.h"
 #include "mumble/plugin/internal/MumbleAPI_v_1_0_x.h"
 
+#include <cstdint>
 #include <exception>
 #include <memory>
 #include <optional>
@@ -77,7 +78,7 @@ public:
 	std::optional< mumble_channelid_t > findChannelByName_noexcept(mumble_connection_t connection,
 																   const char *channelName) const noexcept;
 	bool getMumbleSetting_bool(mumble_settings_key_t key) const;
-	int getMumbleSetting_int(mumble_settings_key_t key) const;
+	int64_t getMumbleSetting_int(mumble_settings_key_t key) const;
 	double getMumbleSetting_double(mumble_settings_key_t key) const;
 	MumbleString getMumbleSetting_string(mumble_settings_key_t key) const;
 	void setMumbleSetting_bool(mumble_settings_key_t key, bool value) const;

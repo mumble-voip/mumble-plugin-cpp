@@ -1,7 +1,5 @@
 # mumble-plugin-cpp
 
-[![Build Status](https://travis-ci.com/mumble-voip/mumble-plugin-cpp.svg?branch=master)](https://travis-ci.com/mumble-voip/mumble-plugin-cpp)
-
 A C++ wrapper for around the C plugin interface that was introduced with Mumble 1.4.0
 
 ## What is it?

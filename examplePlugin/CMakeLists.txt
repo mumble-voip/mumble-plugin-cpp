@@ -18,8 +18,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # In order to use additional parts of the plugin interface, you have to enable the respective optiopn
-# e.g. set(positional-audio ON)
-set(server-event-callbacks ON CACHE BOOL "" FORCE)
+# e.g. set(server-event-callbacks ON CACHE BOOL "" FORCE)
+set(all-features ON CACHE BOOL "" FORCE)
 
 # We need the wrapper as a depency
 add_subdirectory(.. "${CMAKE_CURRENT_BINARY_DIR}/wrapper")

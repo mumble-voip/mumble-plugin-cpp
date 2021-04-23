@@ -1,4 +1,4 @@
-// Copyright 2019-2020 The Mumble Developers. All rights reserved.
+// Copyright 2021 The Mumble Developers. All rights reserved.
 // Use of this source code is governed by a BSD-style license
 // that can be found in the LICENSE file at the root of the
 // Mumble source tree or at <https://www.mumble.info/LICENSE>.
@@ -24,25 +24,6 @@
 #	error No PLUGIN_EXPORT definition available
 #endif
 
-// API version
-#define MUMBLE_PLUGIN_API_MAJOR_PREPR 1
-#define MUMBLE_PLUGIN_API_MINOR_PREPR 0
-#define MUMBLE_PLUGIN_API_PATCH_PREPR 0
-
-const int32_t MUMBLE_PLUGIN_API_MAJOR            = MUMBLE_PLUGIN_API_MAJOR_PREPR;
-const int32_t MUMBLE_PLUGIN_API_MINOR            = MUMBLE_PLUGIN_API_MINOR_PREPR;
-const int32_t MUMBLE_PLUGIN_API_PATCH            = MUMBLE_PLUGIN_API_PATCH_PREPR;
-const mumble_version_t MUMBLE_PLUGIN_API_VERSION = { MUMBLE_PLUGIN_API_MAJOR, MUMBLE_PLUGIN_API_MINOR,
-													 MUMBLE_PLUGIN_API_PATCH };
-
-// Create macro for casting the pointer to the API object to the proper struct.
-// Note that this must only be used if the API uses MUMBLE_PLUGIN_API_VERSION of the API.
-#define MUMBLE_CONCAT_HELPER(a, b) a##_##b
-#define MUMBLE_CONCAT(a, b) MUMBLE_CONCAT_HELPER(a, b)
-#define MUMBLE_API_STRUCT      \
-	MUMBLE_CONCAT(MumbleAPI_v, \
-				  MUMBLE_CONCAT(MUMBLE_PLUGIN_API_MAJOR_PREPR, MUMBLE_CONCAT(MUMBLE_PLUGIN_API_MINOR_PREPR, x)))
-#define MUMBLE_API_CAST(ptrName) (*((struct MUMBLE_API_STRUCT *) ptrName))
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,11 +37,12 @@ extern "C" {
 ///
 /// Registers the ID of this plugin.
 /// @param id The ID for this plugin. This is the ID Mumble will reference this plugin with
-/// 	and by which this plugin can identify itself when communicating with Mumble.
+/// and by which this plugin can identify itself when communicating with Mumble.
 /// @returns The status of the initialization. If everything went fine, return STATUS_OK
 PLUGIN_EXPORT mumble_error_t PLUGIN_CALLING_CONVENTION mumble_init(uint32_t id);
 
 /// Gets called when unloading the plugin in order to allow it to clean up after itself.
+/// Note that it is still safe to call API functions from within this callback.
 PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_shutdown();
 
 /// Gets the name of the plugin.
@@ -75,7 +57,7 @@ PLUGIN_EXPORT struct MumbleStringWrapper PLUGIN_CALLING_CONVENTION mumble_getNam
 ///
 /// NOTE: This function may be called without the plugin being loaded
 ///
-/// @return The respective API Version
+/// @returns The respective API Version
 PLUGIN_EXPORT mumble_version_t PLUGIN_CALLING_CONVENTION mumble_getAPIVersion();
 
 /// Provides the MumbleAPI struct to the plugin. This struct contains function pointers that can be used
@@ -85,9 +67,9 @@ PLUGIN_EXPORT mumble_version_t PLUGIN_CALLING_CONVENTION mumble_getAPIVersion();
 /// NOTE: This function may be called without the plugin being loaded
 ///
 /// @param api A pointer to the MumbleAPI struct. The API struct must be cast to the version corresponding to the
-/// 	user API version. If your plugin is e.g. using the 1.0.x API, then you have to cast this pointer to
-/// 	MumbleAPI_v_1_0_x. Note also that you **must not store this pointer**. It will become invalid. Therefore
-/// 	you have to copy the struct in order to use it later on.
+/// user API version. If your plugin is e.g. using the 1.0.x API, then you have to cast this pointer to
+/// MumbleAPI_v_1_0_x. Note also that you **must not store this pointer**. It will become invalid. Therefore
+/// you have to copy the struct in order to use it later on.
 PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_registerAPIFunctions(void *apiStruct);
 
 /// Releases the resource pointed to by the given pointer. If the respective resource has been allocated before,
@@ -101,7 +83,7 @@ PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_registerAPIFunctions(void *a
 ///
 /// NOTE2: that the pointer might be pointing to memory that had to be allocated without the plugin being loaded.
 /// Therefore you should be very sure that there'll be another callback in which you want to free this memory,
-/// should you decide to not do it here (which is hereby explcitly advised against).
+/// should you decide to not do it here (which is hereby explicitly advised against).
 ///
 /// NOTE3: The pointer is const as Mumble won't mess with the memory allocated by the plugin (no modifications).
 /// Nontheless this function is explicitly responsible for freeing the respective memory parts. If the memory has
@@ -126,11 +108,11 @@ PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_releaseResource(const void *
 ///
 /// @param mumbleVersion The Version of the Mumble client
 /// @param mumbleAPIVersion The Version of the plugin-API the Mumble client runs with
-/// @param minimalExpectedAPIVersion The minimal Version the Mumble clients expects this plugin to meet in order to load
+/// @param minimumExpectedAPIVersion The minimum Version the Mumble clients expects this plugin to meet in order to load
 /// it
 PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_setMumbleInfo(mumble_version_t mumbleVersion,
 																  mumble_version_t mumbleAPIVersion,
-																  mumble_version_t minimalExpectedAPIVersion);
+																  mumble_version_t minimumExpectedAPIVersion);
 
 /// Gets the Version of this plugin
 ///
@@ -167,21 +149,21 @@ PLUGIN_EXPORT uint32_t PLUGIN_CALLING_CONVENTION mumble_getFeatures();
 /// Example (check if FEATURE_POSITIONAL shall be deactivated):
 /// @code
 /// if (features & FEATURE_POSITIONAL) {
-/// 	// positional shall be deactivated
+/// // positional shall be deactivated
 /// };
 /// @endcode
 ///
 /// @param features The feature set that shall be deactivated
 /// @returns The feature set that can't be disabled (bitwise or'ed). If all requested features can be disabled, return
-/// 	FEATURE_NONE. If none of the requested features can be disabled return the unmodified features parameter.
+/// FEATURE_NONE. If none of the requested features can be disabled return the unmodified features parameter.
 PLUGIN_EXPORT uint32_t PLUGIN_CALLING_CONVENTION mumble_deactivateFeatures(uint32_t features);
 
 
 
 //////////////////////////////////////////////////////////////////////////////////
-//////////////////////////// POSITIONAL AUDIO ////////////////////////////////////
+//////////////////////////// POSITIONAL DATA /////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
-// If this plugin wants to provide positional audio, all functions of this category
+// If this plugin wants to provide positional data, ALL functions of this category
 // have to be implemented
 
 /// Indicates that Mumble wants to use this plugin to request positional data. Therefore it should check whether it is
@@ -193,38 +175,38 @@ PLUGIN_EXPORT uint32_t PLUGIN_CALLING_CONVENTION mumble_deactivateFeatures(uint3
 /// @param programPIDs An array of the corresponding program PIDs
 /// @param programCount The length of programNames and programPIDs
 /// @returns The error code. If everything went fine PDEC_OK shall be returned. In that case Mumble will start
-/// frequently 	calling fetchPositionalData. If this returns anything but PDEC_OK, Mumble will assume that the plugin is
-/// (currently) 	uncapable of providing positional data. In this case this function must not have allocated any
-/// memory that needs to be 	cleaned up later on. Depending on the returned error code, Mumble might try to call this
-/// function again later on.
-PLUGIN_EXPORT uint8_t PLUGIN_CALLING_CONVENTION mumble_initPositionalData(const char **programNames,
+/// frequently calling fetchPositionalData. If this returns anything but PDEC_OK, Mumble will assume that the plugin is
+/// (currently) uncapable of providing positional data. In this case this function must not have allocated any memory
+/// that needs to be cleaned up later on. Depending on the returned error code, Mumble might try to call this function
+/// again at some point.
+PLUGIN_EXPORT uint8_t PLUGIN_CALLING_CONVENTION mumble_initPositionalData(const char *const *programNames,
 																		  const uint64_t *programPIDs,
 																		  size_t programCount);
 
-/// Retrieves the positional audio data. If no data can be fetched, set all float-vectors to 0 and return false.
+/// Retrieves the positional data. If no data can be fetched, set all float-vectors to 0 and return false.
 ///
 /// @param[out] avatarPos A float-array of size 3 representing the cartesian position of the player/avatar in the ingame
-/// world. 	One unit represents one meter of distance.
+/// world. One unit represents one meter of distance.
 /// @param[out] avatarDir A float-array of size 3 representing the cartesian direction-vector of the player/avatar
-/// ingame (where it 	is facing).
+/// ingame (where it is facing).
 /// @param[out] avatarAxis A float-array of size 3 representing the vector pointing from the toes of the character to
-/// its head. One 	unit represents one meter of distance.
+/// its head. One unit represents one meter of distance.
 /// @param[out] cameraPos A float-array of size 3 representing the cartesian position of the camera in the ingame world.
-/// 	One unit represents one meter of distance.
+/// One unit represents one meter of distance.
 /// @param[out] cameraDir A float-array of size 3 representing the cartesian direction-vector of the camera ingame
-/// (where it 	is facing).
+/// (where it is facing).
 /// @param[out] cameraAxis A float-array of size 3 representing a vector from the bottom of the camera to its top. One
-/// unit 	represents one meter of distance.
+/// unit represents one meter of distance.
 /// @param[out] context A pointer to where the pointer to a C-encoded string storing the context of the provided
-/// positional data 	shall be written. This context should include information about the server (and team) the player
-/// is on. Only players with identical 	context will be able to hear each other's audio. The returned pointer has to
-/// remain valid until the next invokation of this function 	or until shutdownPositionalData is called.
+/// positional data shall be written. This context should include information about the server (and team) the player is
+/// on. Only players with identical context will be able to hear each other's audio. The returned pointer has to remain
+/// valid until the next invokation of this function or until shutdownPositionalData is called.
 /// @param[out] identity A pointer to where the pointer to a C-encoded string storing the identity of the player shall
-/// be written. It can 	be polled by external scripts from the server and should uniquely identify the player in the
-/// game. The pointer has to remain valid 	until the next invokation of this function or until shutdownPositionalData
-/// is called.
+/// be written. It can be polled by external scripts from the server and should uniquely identify the player in the
+/// game. The pointer has to remain valid until the next invokation of this function or until shutdownPositionalData is
+/// called.
 /// @returns Whether this plugin can continue delivering positional data. If this function returns false,
-/// shutdownPositionalData will 	be called.
+/// shutdownPositionalData will be called.
 PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_fetchPositionalData(float *avatarPos, float *avatarDir,
 																		float *avatarAxis, float *cameraPos,
 																		float *cameraDir, float *cameraAxis,
@@ -241,11 +223,14 @@ PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_shutdownPositionalData();
 //////////////////////////////////////////////////////////////////////////////////
 
 /// Called when connecting to a server.
+/// Note that in most cases you'll want to use mumble_onServerSynchronized instead.
+/// Note also that this callback will be called from a DIFFERENT THREAD!
 ///
 /// @param connection The ID of the newly established server-connection
 PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_onServerConnected(mumble_connection_t connection);
 
 /// Called when disconnecting from a server.
+/// Note that this callback is called from a DIFFERENT THREAD!
 ///
 /// @param connection The ID of the server-connection that has been terminated
 PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_onServerDisconnected(mumble_connection_t connection);
@@ -262,10 +247,10 @@ PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_onServerSynchronized(mumble_
 /// @param connection The ID of the server-connection this event is connected to
 /// @param userID The ID of the user this event has been triggered for
 /// @param previousChannelID The ID of the chanel the user is coming from. Negative IDs indicate that there is no
-/// previous channel (e.g. the user 	freshly connected to the server) or the channel isn't available because of any
-/// other reason.
+/// previous channel (e.g. the user freshly connected to the server) or the channel isn't available because of any other
+/// reason.
 /// @param newChannelID The ID of the channel the user has entered. If the ID is negative, the new channel could not be
-/// retrieved. This means 	that the ID is invalid.
+/// retrieved. This means that the ID is invalid.
 PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_onChannelEntered(mumble_connection_t connection,
 																	 mumble_userid_t userID,
 																	 mumble_channelid_t previousChannelID,
@@ -278,7 +263,7 @@ PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_onChannelEntered(mumble_conn
 /// @param connection The ID of the server-connection this event is connected to
 /// @param userID The ID of the user that left the channel
 /// @param channelID The ID of the channel the user left. If the ID is negative, the channel could not be retrieved.
-/// This means that the ID is 	invalid.
+/// This means that the ID is invalid.
 PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_onChannelExited(mumble_connection_t connection,
 																	mumble_userid_t userID,
 																	mumble_channelid_t channelID);
@@ -293,10 +278,12 @@ PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_onUserTalkingStateChanged(mu
 																			  mumble_talking_state_t talkingState);
 
 /// Called whenever there is audio input.
+/// Note that this callback will be called from the AUDIO THREAD.
+/// Note also that blocking this callback will cause Mumble's audio processing to get suspended.
 ///
 /// @param inputPCM A pointer to a short-array holding the pulse-code-modulation (PCM) representing the audio input. Its
-/// length 	is sampleCount * channelCount. The PCM format for stereo input is [LRLRLR...] where L and R are samples of
-/// the left and right 	channel respectively.
+/// length is sampleCount * channelCount. The PCM format for stereo input is [LRLRLR...] where L and R are samples of
+/// the left and right channel respectively.
 /// @param sampleCount The amount of sample points per channel
 /// @param channelCount The amount of channels in the audio
 /// @param sampleRate The used sample rate in Hz
@@ -309,16 +296,18 @@ PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_onAudioInput(short *inputPCM
 
 /// Called whenever Mumble fetches data from an active audio source (could be a voice packet or a playing sample).
 /// The provided audio buffer is the raw buffer without any processing applied to it yet.
+/// Note that this callback will be called from the AUDIO THREAD.
+/// Note also that blocking this callback will cause Mumble's audio processing to get suspended.
 ///
 /// @param outputPCM A pointer to a float-array holding the pulse-code-modulation (PCM) representing the audio output.
-/// Its length 	is sampleCount * channelCount. The PCM format for stereo output is [LRLRLR...] where L and R are samples
-/// of the left and right 	channel respectively.
+/// Its length is sampleCount * channelCount. The PCM format for stereo output is [LRLRLR...] where L and R are samples
+/// of the left and right channel respectively.
 /// @param sampleCount The amount of sample points per channel
 /// @param channelCount The amount of channels in the audio
 /// @param sampleRate The used sample rate in Hz
 /// @param isSpeech Whether this audio belongs to a received voice packet (and will thus (most likely) contain speech)
 /// @param userID If isSpeech is true, this contains the ID of the user this voice packet belongs to. If isSpeech is
-/// false, 	the content of this parameter is unspecified and should not be accessed
+/// false, the content of this parameter is unspecified and should not be accessed
 /// @returns Whether this callback has modified the audio output-array
 PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount,
 																		 uint16_t channelCount, uint32_t sampleRate,
@@ -326,10 +315,12 @@ PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_onAudioSourceFetched(float *
 
 /// Called whenever the fully mixed and processed audio is about to be handed to the audio backend (about to be played).
 /// Note that this happens immediately before Mumble clips the audio buffer.
+/// Note that this callback will be called from the AUDIO THREAD.
+/// Note also that blocking this callback will cause Mumble's audio processing to get suspended.
 ///
 /// @param outputPCM A pointer to a float-array holding the pulse-code-modulation (PCM) representing the audio output.
-/// Its length 	is sampleCount * channelCount. The PCM format for stereo output is [LRLRLR...] where L and R are samples
-/// of the left and right 	channel respectively.
+/// Its length is sampleCount * channelCount. The PCM format for stereo output is [LRLRLR...] where L and R are samples
+/// of the left and right channel respectively.
 /// @param sampleCount The amount of sample points per channel
 /// @param channelCount The amount of channels in the audio
 /// @param sampleRate The used sample rate in Hz
@@ -402,9 +393,9 @@ PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_onChannelRenamed(mumble_conn
 /// enable that.
 ///
 /// @param keyCode The key code of the respective key. The character codes are defined
-/// 	via the Mumble_KeyCode enum. For printable 7-bit ASCII characters these codes conform
-/// 	to the ASCII code-page with the only difference that case is not distinguished. Therefore
-/// 	always the upper-case letter code will be used for letters.
+/// via the Mumble_KeyCode enum. For printable 7-bit ASCII characters these codes conform
+/// to the ASCII code-page with the only difference that case is not distinguished. Therefore
+/// always the upper-case letter code will be used for letters.
 /// @param wasPres Whether the respective key has been pressed (instead of released)
 PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_onKeyEvent(uint32_t keyCode, bool wasPress);
 

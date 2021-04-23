@@ -77,7 +77,7 @@ MumbleStringWrapper MumblePlugin::getDescription() const noexcept {
 }
 
 #ifdef MUMBLE_PLUGIN_WRAPPER_USE_POSITIONAL_AUDIO
-uint8_t MumblePlugin::internal_initPositionalData(const char **programNames, const uint64_t *programPIDs,
+uint8_t MumblePlugin::internal_initPositionalData(const char *const *programNames, const uint64_t *programPIDs,
 												  std::size_t programCount) noexcept {
 	std::vector< ProgramInformation > programs;
 	programs.reserve(programCount);

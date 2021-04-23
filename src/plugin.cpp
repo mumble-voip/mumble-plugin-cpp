@@ -58,7 +58,7 @@ PLUGIN_EXPORT uint32_t PLUGIN_CALLING_CONVENTION mumble_deactivateFeatures(uint3
 }
 
 #ifdef MUMBLE_PLUGIN_WRAPPER_USE_POSITIONAL_AUDIO
-PLUGIN_EXPORT uint8_t PLUGIN_CALLING_CONVENTION mumble_initPositionalData(const char **programNames,
+PLUGIN_EXPORT uint8_t PLUGIN_CALLING_CONVENTION mumble_initPositionalData(const char *const *programNames,
 																		  const uint64_t *programPIDs,
 																		  size_t programCount) {
 	return MumblePlugin::getPlugin().internal_initPositionalData(programNames, programPIDs, programCount);

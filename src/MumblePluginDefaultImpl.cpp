@@ -91,7 +91,7 @@ uint8_t MumblePlugin::internal_initPositionalData(const char *const *programName
 #endif
 
 mumble_error_t MumblePlugin::init() noexcept {
-	return STATUS_OK;
+	return MUMBLE_STATUS_OK;
 }
 
 void MumblePlugin::shutdown() noexcept {
@@ -110,7 +110,7 @@ mumble_version_t MumblePlugin::getVersion() const noexcept {
 }
 
 uint32_t MumblePlugin::getFeatures() const noexcept {
-	return FEATURE_NONE;
+	return MUMBLE_FEATURE_NONE;
 }
 
 uint32_t MumblePlugin::deactivateFeatures(uint32_t features) noexcept {
@@ -120,7 +120,7 @@ uint32_t MumblePlugin::deactivateFeatures(uint32_t features) noexcept {
 #ifdef MUMBLE_PLUGIN_WRAPPER_USE_POSITIONAL_AUDIO
 uint8_t MumblePlugin::initPositionalData(std::vector< ProgramInformation > &programs) noexcept {
 	// Report permanent error by default in order to turn positional data off
-	return PDEC_ERROR_PERM;
+	return MUMBLE_PDEC_ERROR_PERM;
 }
 
 bool MumblePlugin::fetchPositionalData(float *avatarPos, float *avatarDir, float *avatarAxis, float *cameraPos,

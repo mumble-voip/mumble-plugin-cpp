@@ -8,9 +8,9 @@
 
 #include <cstring>
 
-#define HANDLE_ERROR(errorCode, function)                                                                   \
-	if (errorCode != STATUS_OK) {                                                                           \
-		throw MumbleAPIException(errorCode, std::string(#function " errored: ") + errorMessage(errorCode)); \
+#define HANDLE_ERROR(errorCode, function)                                                                          \
+	if (errorCode != MUMBLE_STATUS_OK) {                                                                           \
+		throw MumbleAPIException(errorCode, std::string(#function " errored: ") + mumble_errorMessage(errorCode)); \
 	}
 
 #define WRAP_RESOURCE(type, resource) MumbleResourceWrapper< type >(resource, m_pluginID, m_apiStruct.freeMemory)

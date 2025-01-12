@@ -1,11 +1,11 @@
-# Copyright 2020 The Mumble Developers. All rights reserved.
+# Copyright The Mumble Developers. All rights reserved.
 # Use of this source code is governed by a BSD-style license
 # that can be found in the LICENSE file at the root of the
 # source tree.
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.0...3.31)
 
-set(version "1.0.0")
+set(version "1.1.0")
 
 project(MumblePluginCppWrapper
 	VERSION "${version}"
@@ -27,7 +27,6 @@ option(all-callbacks "Include event callback functions" OFF)
 option(all-features "Shortcut for enabling all plugin features" OFF)
 
 add_library(mumble_plugin_cpp_wrapper INTERFACE)
-add_library(mumble_plugin_cpp_wrapper_api INTERFACE)
 
 set(WRAPPER_SOURCES
 	src/MumblePluginDefaultImpl.cpp
@@ -38,20 +37,16 @@ set(API_SOURCES
 	src/MumbleAPI.cpp
 )
 
-target_link_libraries(mumble_plugin_cpp_wrapper INTERFACE mumble_plugin_cpp_wrapper_api)
+target_compile_definitions(mumble_plugin_cpp_wrapper
+	INTERFACE
+		MUMBLE_PLUGIN_NO_DEFAULT_FUNCTION_DEFINITIONS
+		MUMBLE_PLUGIN_NO_API_TYPEDEF
+)
 
 # Set all source files as absolute paths
-foreach(CURRENT_SOURCE IN LISTS WRAPPER_SOURCES)
+foreach(CURRENT_SOURCE IN LISTS WRAPPER_SOURCES API_SOURCES)
 	get_filename_component(ABS_SOURCE_PATH "${CURRENT_SOURCE}" REALPATH BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 	target_sources(mumble_plugin_cpp_wrapper
-		INTERFACE
-			"${ABS_SOURCE_PATH}"
-	)
-endforeach()
-
-foreach(CURRENT_SOURCE IN LISTS API_SOURCES)
-	get_filename_component(ABS_SOURCE_PATH "${CURRENT_SOURCE}" REALPATH BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-	target_sources(mumble_plugin_cpp_wrapper_api
 		INTERFACE
 			"${ABS_SOURCE_PATH}"
 	)
@@ -66,17 +61,9 @@ set(API_INCLUDES
 )
 
 # Set all include-dirs as absolute paths
-foreach(CURRENT_INCLUDE IN LISTS WRAPPER_INCLUDES)
+foreach(CURRENT_INCLUDE IN LISTS WRAPPER_INCLUDES API_INCLUDES)
 	get_filename_component(ABS_INCLUDE_PATH "${CURRENT_INCLUDE}" ABSOLUTE "${CMAKE_CURRENT_SOURCE_DIR}")
 	target_include_directories(mumble_plugin_cpp_wrapper
-		INTERFACE
-		"${ABS_INCLUDE_PATH}"
-	)
-endforeach()
-
-foreach(CURRENT_INCLUDE IN LISTS API_INCLUDES)
-	get_filename_component(ABS_INCLUDE_PATH "${CURRENT_INCLUDE}" ABSOLUTE "${CMAKE_CURRENT_SOURCE_DIR}")
-	target_include_directories(mumble_plugin_cpp_wrapper_api
 		INTERFACE
 		"${ABS_INCLUDE_PATH}"
 	)

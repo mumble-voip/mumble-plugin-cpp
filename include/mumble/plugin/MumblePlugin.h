@@ -13,7 +13,7 @@
 
 #include "mumble/plugin/MumbleAPI.h"
 
-#include "mumble/plugin/internal/PluginComponents_v_1_0_x.h"
+#include "mumble/plugin/internal/MumblePlugin.h"
 
 using mumble_plugin_id_t = uint32_t;
 
@@ -28,12 +28,13 @@ private:
 	std::string m_name;
 	std::string m_author;
 	std::string m_description;
+	std::string m_posDataPrefix;
 
 protected:
 	MumbleAPI m_api;
 
 public:
-	MumblePlugin(const std::string &name, const std::string &author, const std::string &description = std::string());
+	MumblePlugin(std::string name, std::string author, std::string description = {}, std::string posDataPrefix = {});
 	virtual ~MumblePlugin();
 
 	virtual mumble_error_t internal_init(mumble_plugin_id_t id) noexcept final;
@@ -60,6 +61,7 @@ public:
 									 float *cameraDir, float *cameraAxis, const char **context,
 									 const char **identity) noexcept;
 	virtual void shutdownPositionalData() noexcept;
+	virtual MumbleStringWrapper getPositionalDataContextPrefix() noexcept;
 #endif // MUMBLE_PLUGIN_WRAPPER_USE_POSITIONAL_AUDIO
 
 #ifdef MUMBLE_PLUGIN_WRAPPER_USE_SERVER_EVENT_CALLBACKS

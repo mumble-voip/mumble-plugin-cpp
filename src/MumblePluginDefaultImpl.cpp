@@ -5,14 +5,13 @@
 
 #include "mumble/plugin/MumblePlugin.h"
 
-#include "mumble/plugin/internal/MumblePlugin_v_1_0_x.h"
-
-#include <iostream>
+#include "mumble/plugin/internal/MumblePlugin.h"
 
 #define UNUSED(var) (void) var
 
-MumblePlugin::MumblePlugin(const std::string &name, const std::string &author, const std::string &description)
-	: m_name(name), m_author(author), m_description(description) {
+MumblePlugin::MumblePlugin(std::string name, std::string author, std::string description, std::string posDataPrefix)
+	: m_name(std::move(name)), m_author(std::move(author)), m_description(std::move(description)),
+	  m_posDataPrefix(std::move(posDataPrefix)) {
 }
 
 MumblePlugin::~MumblePlugin() {
@@ -139,6 +138,15 @@ bool MumblePlugin::fetchPositionalData(float *avatarPos, float *avatarDir, float
 }
 
 void MumblePlugin::shutdownPositionalData() noexcept {
+}
+
+MumbleStringWrapper MumblePlugin::getPositionalDataContextPrefix() noexcept {
+	MumbleStringWrapper wrapper;
+	wrapper.data           = m_posDataPrefix.data();
+	wrapper.size           = m_posDataPrefix.size();
+	wrapper.needsReleasing = false;
+
+	return wrapper;
 }
 #endif // MUMBLE_PLUGIN_WRAPPER_USE_POSITIONAL_AUDIO
 

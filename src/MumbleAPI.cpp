@@ -28,7 +28,7 @@ mumble_error_t MumbleAPIException::errorCode() const noexcept {
 }
 
 
-MumbleAPI::MumbleAPI(MumbleAPI_v_1_0_x apiStruct, mumble_plugin_id_t pluginID)
+MumbleAPI::MumbleAPI(MumbleAPI_v_1_2_x apiStruct, mumble_plugin_id_t pluginID)
 	: m_apiStruct(apiStruct), m_pluginID(pluginID) {
 }
 
@@ -384,8 +384,8 @@ mumble_error_t MumbleAPI::log_noexcept(const char *message) const noexcept {
 	return m_apiStruct.log(m_pluginID, message);
 }
 
-void MumbleAPI::playSample(const char *samplePath) const {
-	mumble_error_t errorCode = m_apiStruct.playSample(m_pluginID, samplePath);
+void MumbleAPI::playSample(const char *samplePath, float volume) const {
+	mumble_error_t errorCode = m_apiStruct.playSample(m_pluginID, samplePath, volume);
 
 	HANDLE_ERROR(errorCode, playSample);
 }

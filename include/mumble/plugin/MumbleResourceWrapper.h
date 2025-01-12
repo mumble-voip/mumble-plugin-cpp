@@ -6,7 +6,7 @@
 #ifndef MUMBLEPLUGIN_MUMBLERESOURCEWRAPPER_H_
 #define MUMBLEPLUGIN_MUMBLERESOURCEWRAPPER_H_
 
-#include "mumble/plugin/internal/PluginComponents_v_1_0_x.h"
+#include "mumble/plugin/internal/MumblePlugin.h"
 
 template< typename ResourceType > class MumbleResourceWrapper {
 private:

@@ -8,7 +8,7 @@
 
 #include "mumble/plugin/MumbleArray.h"
 #include "mumble/plugin/MumbleString.h"
-#include "mumble/plugin/internal/MumbleAPI_v_1_0_x.h"
+#include "mumble/plugin/internal/MumblePlugin.h"
 
 #include <cstdint>
 #include <exception>
@@ -33,7 +33,7 @@ class MumbleAPI {
 	friend class MumblePlugin;
 
 private:
-	MumbleAPI_v_1_0_x m_apiStruct;
+	MumbleAPI_v_1_2_x m_apiStruct;
 	mumble_plugin_id_t m_pluginID;
 
 	void setPluginID(mumble_plugin_id_t pluginID) noexcept;
@@ -41,7 +41,7 @@ private:
 	MumbleAPI() = default;
 
 public:
-	explicit MumbleAPI(MumbleAPI_v_1_0_x apiStruct, mumble_plugin_id_t pluginID = 0);
+	explicit MumbleAPI(MumbleAPI_v_1_2_x apiStruct, mumble_plugin_id_t pluginID = 0);
 	~MumbleAPI();
 
 	void freeMemory(const void *pointer) const;
@@ -89,7 +89,7 @@ public:
 				  const std::vector< uint8_t > &data, const char *dataID) const;
 	void log(const char *message) const;
 	mumble_error_t log_noexcept(const char *message) const noexcept;
-	void playSample(const char *samplePath) const;
+	void playSample(const char *samplePath, float volume = 1.0f) const;
 };
 
 #endif // MUMBLEPLUGIN_MUMBLEAPI_H_

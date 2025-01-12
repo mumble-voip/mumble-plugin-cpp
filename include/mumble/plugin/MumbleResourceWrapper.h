@@ -10,7 +10,7 @@
 
 template< typename ResourceType > class MumbleResourceWrapper {
 private:
-	using freeMemoryFunction = mumble_error_t (*const)(mumble_plugin_id_t, const void *);
+	using freeMemoryFunction = mumble_error_t (*)(mumble_plugin_id_t, const void *);
 	mumble_plugin_id_t m_pluginID;
 	freeMemoryFunction m_func;
 	ResourceType *m_resource = nullptr;
